@@ -3,6 +3,10 @@ package Engine.IO;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11.*;
+
+import static org.lwjgl.opengl.GL11.*;
+
 
 public class Window {
     private int width, height;
@@ -12,6 +16,7 @@ public class Window {
     public static long time;
     public Input input;
     private float backgroundR, backgroundG, backgroundB;
+    private Grid grid;
 
 
 
@@ -39,6 +44,10 @@ public class Window {
         GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
         GLFW.glfwMakeContextCurrent(window);
         GL.createCapabilities();
+
+        initGraphics();
+        grid = new Grid(30,16,50);
+
 
 
         GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
@@ -78,6 +87,27 @@ public class Window {
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
     }
+
+    public void initGraphics(){
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0,width, height, 0, -1, 1);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    }
+
+    public void render(){
+        glClear(GL_COLOR_BUFFER_BIT);
+        grid.render();
+        swapBuffers();
+
+    }
+
+
 
     public void setBackgroundColor(float r, float b, float g){
         backgroundR = r;

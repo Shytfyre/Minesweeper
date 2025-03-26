@@ -1,15 +1,18 @@
 package Game;
 
-import Engine.IO.Input;
+
+import Engine.IO.*;
 import org.lwjgl.glfw.GLFW;
 
+import javax.swing.text.AbstractDocument;
 
-import Engine.IO.Window;
+import static org.lwjgl.opengl.GL11.*;
+
 
 public class Main implements Runnable {
     public Thread game;
     public Window window;
-    public final int WIDTH = 1280, HEIGHT = 760;
+    public final int WIDTH = 1500, HEIGHT = 800;
     public final String TITLE = "BOOM";
 
     public void start() {
@@ -25,8 +28,9 @@ public class Main implements Runnable {
     public void run() {
         init();
         while (!window.shouldClose()) {
-            update();
             render();
+            update();
+
             if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 System.out.println("Game has been closed.");
                 return;
@@ -43,7 +47,10 @@ public class Main implements Runnable {
     }
 
     private void render() {
-        window.swapBuffers();
+
+
+
+        window.render();
     }
 
     public static void main(String[] args) {
