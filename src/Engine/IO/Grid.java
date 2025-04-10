@@ -1,25 +1,41 @@
 package Engine.IO;
-import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
 
 public class Grid {
 
-private int rows,cols;
-private int tileSize;
+private final int rows,cols;
+private final int tileSize;
+private final int offsetX;
+private final int offsetY;
 
-public Grid (int rows, int cols, int tileSize) {
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    public int getOffsetX() {
+        return offsetX;
+    }
+
+    public int getOffsetY() {
+        return offsetY;
+    }
+
+public Grid (int rows, int cols, int tileSize, int offsetX, int offsetY) {
     this.rows = rows;
     this.cols = cols;
     this.tileSize = tileSize;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+
 }
 
 public void render() {
     for (int row = 0; row <rows; row++){
         for (int col = 0; col < cols; col++){
-            int x = row * tileSize;
-            int y = col * tileSize;
+            int x = offsetX + col * tileSize;
+            int y = offsetY + row * tileSize;
             drawCell(x, y, tileSize);
         }
     }

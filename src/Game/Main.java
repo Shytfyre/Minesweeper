@@ -4,16 +4,18 @@ package Game;
 import Engine.IO.*;
 import org.lwjgl.glfw.GLFW;
 
-import javax.swing.text.AbstractDocument;
 
-import static org.lwjgl.opengl.GL11.*;
-
-
+//could superclass my loop for now but might need the slot for something else in the future so using an interface saves me that option
 public class Main implements Runnable {
     public Thread game;
     public Window window;
+    //could comment the screen settings out but cba currently - they are useless tho
     public final int WIDTH = 1500, HEIGHT = 800;
-    public final String TITLE = "BOOM";
+    public final String TITLE = "Minesweeper";
+    public int tileSize;
+    public int offsetX;
+    public int offsetY;
+
 
     public void start() {
         game = new Thread(this, TITLE);
@@ -39,11 +41,33 @@ public class Main implements Runnable {
         window.destroy();
     }
 
+
     private void update() {
         window.update();
+        //Coordinate detection (obsolete in grid-based tracking), probably useful for BOOM
+            // if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+               // System.out.println("X: " + Input.getMouseX() + "| Y: " + Input.getMouseY());}
+
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-            System.out.println("X: " + Input.getMouseX() + "| Y: " + Input.getMouseY());
+
+            double mouseX = Input.getMouseX();
+            double mouseY = Input.getMouseY();
+
+            Grid grid = window.getGrid();
+            tileSize = grid.getTileSize();
+            offsetX = grid.getOffsetX();
+            offsetY = grid.getOffsetY();
+
+
+            int gridX = (int) ((mouseX - offsetX) / tileSize);
+            int gridY = (int) ((mouseY - offsetY) / tileSize);
+
+            System.out.println("Selected tile: " + gridX + "/ " + gridY);
+
+
         }
+
+
     }
 
     private void render() {
@@ -57,3 +81,5 @@ public class Main implements Runnable {
         new Main().start();
     }
 }
+
+

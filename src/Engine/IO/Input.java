@@ -14,7 +14,7 @@ public class Input {
     private GLFWMouseButtonCallback mouseButton;
     private GLFWCursorPosCallback mousePos;
 
-
+    //checks for any form of input and saves them for processing
     public Input() {
         keyboard = new GLFWKeyCallback() {
             public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -36,7 +36,7 @@ public class Input {
             }
         };
 
-    };
+    }
 
     public static boolean isKeyDown (int key){
         return keys[key];
