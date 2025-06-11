@@ -13,6 +13,8 @@ public class Minesweeper extends JFrame {
     private static final int ROWS = 16;
     private static final int COLS = 30;
     int MINES = 0;
+    private int safelyRevealedMines = 0;
+    
     private void Schwierigkeit () {
         int response = JOptionPane.showOptionDialog(null, null, null, 0, 0, null, options, null);
         if (response == 0) {
@@ -64,8 +66,8 @@ public class Minesweeper extends JFrame {
 
         //timer Label
         JPanel TimerPanel = new JPanel ();
-        timerLabel = new JLabel("Time: 0s");
-        timerLabel.setPreferredSize(new Dimension(150, 100));
+        timerLabel = new JLabel("Time: " + elapsedTime + "s");
+        timerLabel.setPreferredSize(new Dimension(100, 100));
         TimerPanel.setBackground(Color.WHITE);
         TimerPanel.add(timerLabel);
         add (TimerPanel, BorderLayout.LINE_END);
@@ -203,7 +205,7 @@ public class Minesweeper extends JFrame {
         if (tile.isRevealed || tile.isFlagged) return;
         tile.reveal();
         addScore(10);
-        statusLabel.setText("Score: " + Score + " | Muselmänner: " + (MINES - flagsPlaced));
+        statusLabel.setText("Score: " + Score + " | Minen " + (MINES - flagsPlaced));
         tilesRevealed++;
         if (tile.isMine) {
             gameOver(false);
@@ -235,16 +237,19 @@ public class Minesweeper extends JFrame {
         if (tile.isRevealed || tile.isFlagged) return;
         tile.reveal();
         subtractScore(50);
-        statusLabel.setText("Score: " + Score + "| Muselmänner: " + (MINES - flagsPlaced));
+        statusLabel.setText("Score: " + Score + "| Minen: " + (MINES - flagsPlaced));
         tilesRevealed++;
+
         if (tile.isMine) {
+            safelyRevealedMines++;
             return;
         }
 
-        if (tilesRevealed == ROWS * COLS - this.MINES) {
+        if (tilesRevealed == ROWS * COLS - this.MINES + safelyRevealedMines) {
             gameOver(true);
         }
     }
+
     private void safeRevealTileX2(int row, int col) {
         Tile tile = board[row][col];
 
@@ -256,13 +261,15 @@ public class Minesweeper extends JFrame {
         tilesRevealed++;
 
         if (tile.isMine) {
+            safelyRevealedMines++;
             return;
         }
-        if (tilesRevealed == ROWS * COLS - this.MINES) {
+
+        if (tilesRevealed == ROWS * COLS - this.MINES + safelyRevealedMines) {
             gameOver(true);
         }
-
     }
+
     private void safeRevealTileX3(int row, int col) {
         Tile tile = board[row][col];
 
@@ -274,12 +281,13 @@ public class Minesweeper extends JFrame {
         tilesRevealed++;
 
         if (tile.isMine) {
+            safelyRevealedMines++;
             return;
         }
-        if (tilesRevealed == ROWS * COLS - this.MINES) {
+
+        if (tilesRevealed == ROWS * COLS - this.MINES + safelyRevealedMines) {
             gameOver(true);
         }
-
     }
 
     //Mimi, Powerup2: Reveal a 3x3 Space safely
@@ -287,7 +295,6 @@ public class Minesweeper extends JFrame {
         if (Score < 450) {
             return;
         }else {
-
             subtractScore(450);
 
             for (int dr = -1; dr <= 1; dr++) {
@@ -296,33 +303,33 @@ public class Minesweeper extends JFrame {
                     if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) continue;
                     if (!(dr == 0 && dc == 0)) {
                         safeRevealTileX2(nr, nc);
-                        statusLabel.setText("Score: " + Score + " | Muselmänner: " + (MINES - flagsPlaced));
+                        statusLabel.setText("Score: " + Score + " | Minen " + (MINES - flagsPlaced));
                     }
                 }
             }
         }
 
-        if (tilesRevealed == ROWS * COLS - this.MINES) {
+        if (tilesRevealed == ROWS * COLS - this.MINES + safelyRevealedMines) {
             gameOver(true);
         }
     }
+
     //Mimi, Powerup3: reveal vertical row
     private void safeRevealVerticalColumn(int row, int col) {
         if (Score < 800) {
             return;
         } else {
-            subtractScore(800);
-
+            subtractScore(0);
 
             for (int r = 0; r < ROWS; r++) {
                 if (r >= 0 && r < ROWS && col >= 0 && col < COLS) {
                     safeRevealTileX3(r, col);
                 }
             }
-            statusLabel.setText("Score: " + Score + " | Muselmänner: " + (MINES - flagsPlaced));
+            statusLabel.setText("Score: " + Score + " | Minen: " + (MINES - flagsPlaced));
         }
 
-        if (tilesRevealed == ROWS * COLS - this.MINES) {
+        if (tilesRevealed == ROWS * COLS - this.MINES + safelyRevealedMines) {
             gameOver(true);
         }
     }
@@ -341,17 +348,17 @@ public class Minesweeper extends JFrame {
             }
         }
         if (win) {
-            statusLabel.setText("yayy! \uD83E\uDD73");
+            statusLabel.setText("Gewonnen! \uD83E\uDD73");
             int choice = JOptionPane.showConfirmDialog(null, "Nochmal spielen?",
-                    "yayy! \uD83E\uDD73", JOptionPane.YES_NO_OPTION);
+                    "Gewonnen! \uD83E\uDD73 in in " +elapsedTime+ "Sekunden!" +elapsedTime+ "Sekunden!", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(Minesweeper::new);
             } else if (choice == JOptionPane.NO_OPTION) {
             }
         } else {
-            statusLabel.setText("womp womp \uD83D\uDE2D \uD83D\uDC80");
+            statusLabel.setText("Verloren.... \uD83D\uDE2D \uD83D\uDC80");
             int choice = JOptionPane.showConfirmDialog(null, "Nochmal spielen?",
-                    "womp womp \uD83D\uDE2D \uD83D\uDC80", JOptionPane.YES_NO_OPTION);
+                    "Verloren.... \uD83D\uDE2D \uD83D\uDC80 in " +elapsedTime+ "Sekunden!", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(Minesweeper::new);
             } else if (choice == JOptionPane.NO_OPTION) {
