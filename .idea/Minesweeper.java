@@ -460,7 +460,7 @@ public class Minesweeper extends JFrame {
             }
 
 
-            statusLabel.setText("Score: " + Score + " | Muselmänner: " + (MINES - flagsPlaced));
+            statusLabel.setText("Score: " + Score + " | Minen: " + (MINES - flagsPlaced));
         }
 
         //red gradients to show increasing danger, can be changed to rbg or whatever, also maybe HexCode colors ?
